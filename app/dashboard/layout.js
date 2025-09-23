@@ -2,7 +2,7 @@
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 
-export default function layout({ children }) {
+export default function Layout({ children }) {
   const { user } = useAuth();
   const router = useRouter();
 

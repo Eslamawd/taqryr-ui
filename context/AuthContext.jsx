@@ -2,7 +2,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import api from "../api/axiosClient"; // Adjust path as needed
 import Cookies from "js-cookie";
-import cookie from "cookie";
+import { parse } from "cookie";
 
 const AuthContext = createContext();
 
@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
     if (!reqCookies) {
       return !!Cookies.get("ticket_management_is_user_logged_in");
     }
-    return !!cookie.parse(reqCookies).ticket_management_is_user_logged_in;
+    return !!parse(reqCookies).ticket_management_is_user_logged_in;
   };
 
   const login = async (userData) => {
