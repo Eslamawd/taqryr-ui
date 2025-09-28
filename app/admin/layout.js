@@ -8,6 +8,7 @@ import {
   BarChart3,
   Briefcase,
   Building2,
+  Contact,
   CreditCard,
   LogOut,
   Plane,
@@ -23,8 +24,8 @@ export default function AdminLayout({ children }) {
   const { logout, user } = useAuth();
   const router = useRouter();
 
-  if (!user && user.role !== "admin") {
-    router.back();
+  if (!user && user?.role !== "admin") {
+    router.push("/");
     return null;
   }
 
@@ -43,17 +44,16 @@ export default function AdminLayout({ children }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 20 }}
-      className="container py-8"
+      className="container mt-16 py-8"
     >
       {/* العنوان + زر تسجيل الخروج */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between  items-center mb-8">
         <h1 className="text-3xl font-bold">
           {lang === "ar" ? "لوحة التحكم" : "Dashboard"}
         </h1>
         <div className="flex items-center gap-3">
           <Button onClick={handleLogout}>
             <LogOut className="" />
-            {lang === "ar" ? "تسجيل الخروج" : "Logout"}
           </Button>
         </div>
       </div>
@@ -125,6 +125,15 @@ export default function AdminLayout({ children }) {
                   >
                     <CreditCard className="h-6 w-6" />
                     {lang === "ar" ? "  المدفوعات" : " Payments"}
+                  </Link>
+                </Button>
+                <Button className="flex items-center w-full hover: justify-center">
+                  <Link
+                    href="/admin/contacts"
+                    className="flex items-center gap-2 text-lg font-medium text-gray-700 hover:text-primary"
+                  >
+                    <Contact className="h-6 w-6" />
+                    {lang === "ar" ? "  الاتصالات" : " Contacts"}
                   </Link>
                 </Button>
               </nav>

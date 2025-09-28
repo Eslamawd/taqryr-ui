@@ -10,21 +10,37 @@ import { getCountry, getTargetingSnap } from "@/lib/targetingApi";
 import TargetRow from "./TargetRow";
 import PhoneVideoPreview from "../PhoneVideoPreview";
 import PlatformPicker from "./PlatformPicker";
+import { useAuth } from "@/context/AuthContext";
+import { getBalanceUser } from "@/lib/walletApi";
+import PlatformPickerCreate from "./PlatformPickerCreate";
+import ObjectivePicker from "./ObjectivePicker";
+import { useCurrency } from "@/context/CurrencyContext";
+import { useLanguage } from "@/context/LanguageContext";
+import { InfoIcon } from "lucide-react";
+import ObjectiveSelector from "./ObjectiveSlector";
 
 export default function CreateAdsForm({ onSuccess, onCancel }) {
   const [formData, setFormData] = useState({
     name: "",
-    platform: "",
+    platform: [],
     objective: "",
-    budget: "",
+    budget: "100",
     start_date: "",
+    link: "",
+    iphone_id: "",
+    android_id: "",
+    name_app: "",
+    logo_image: "",
     end_date: "",
     files: [],
     filePreviews: [],
   });
   const [countries, setCountries] = useState([]);
+  const [userBalance, setUserBalance] = useState(0);
 
-  const [days, setDays] = useState(30);
+  const { formatPrice } = useCurrency();
+
+  const [days, setDays] = useState("2");
   const [dailySpend, setDailySpend] = useState(0);
   const [targets, setTargets] = useState([
     {
@@ -47,6 +63,9 @@ export default function CreateAdsForm({ onSuccess, onCancel }) {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const { lang } = useLanguage();
+  const { user } = useAuth();
 
   const handleInputChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -180,6 +199,14 @@ export default function CreateAdsForm({ onSuccess, onCancel }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(userBalance);
+    const totalCost = formData.budget * days * formData.platform.length;
+
+    if (userBalance < totalCost) {
+      return toast.error(
+        "رصيدك لا يكفي لتشغيل الإعلان على كل المنصات المختارة"
+      );
+    }
     if (!formData.name || !formData.platform)
       return toast.error("أدخل اسم الإعلان والمنصة");
     if (!formData.files.length)
@@ -189,19 +216,31 @@ export default function CreateAdsForm({ onSuccess, onCancel }) {
       const payload = new FormData();
       for (let key of [
         "name",
-        "platform",
         "objective",
-        "budget",
         "start_date",
         "end_date",
+        "link",
+        "name_app",
+        "iphone_id",
+        "android_id",
       ])
         payload.append(key, formData[key]);
+      // المنصات (array)
+      formData.platform.forEach((p) => payload.append("platform[]", p));
+      payload.append("budget", formData.budget * days);
+
       formData.files.forEach((f) => payload.append("files[]", f));
+      if (formData.logo_image) {
+        payload.append("logo_image", formData.logo_image);
+      }
       payload.append("targets", JSON.stringify(targets));
       const res = await addNewAd(payload);
       if (res?.status === "success") {
         onSuccess();
         toast.success("تم إنشاء الإعلان");
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
       } else toast.error("فشل إنشاء الإعلان");
     } catch (err) {
       console.error(err);
@@ -210,14 +249,17 @@ export default function CreateAdsForm({ onSuccess, onCancel }) {
       setIsLoading(false);
     }
   };
-
   const updateValues = useCallback(() => {
-    const calculatedSpend = days > 0 ? Number(formData.budget) / days : 0;
+    const daysNum = Number(days) || 2; // ضمان إنه رقم
+    const budgetNum = Number(formData.budget) || 100;
+
+    const calculatedSpend = daysNum > 0 ? budgetNum * daysNum : 0;
     setDailySpend(calculatedSpend);
 
     const today = new Date();
     const start = today.toISOString().split("T")[0];
-    today.setDate(today.getDate() + days);
+
+    today.setDate(today.getDate() + daysNum); // ✅ استخدم رقم
     const end = today.toISOString().split("T")[0];
 
     setFormData((prev) => ({
@@ -227,8 +269,22 @@ export default function CreateAdsForm({ onSuccess, onCancel }) {
     }));
   }, [days, formData.budget]);
 
+  const fetchUserBalance = async () => {
+    if (user) {
+      try {
+        const response = await getBalanceUser(user.id);
+        const safeBalance = Math.max(0, response.balance || 0);
+        setUserBalance(safeBalance);
+      } catch (error) {
+        console.error("Error fetching user balance:", error);
+        toast.error("Failed to fetch balance");
+      }
+    }
+  };
+
   useEffect(() => {
     fetchCountry();
+    fetchUserBalance();
   }, []);
 
   useEffect(() => {
@@ -247,13 +303,18 @@ export default function CreateAdsForm({ onSuccess, onCancel }) {
       {/* الحقول الأساسية */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="md:col-span-2">
-          <PlatformPicker
+          <PlatformPickerCreate
             value={formData.platform}
             onChange={(val) => setFormData({ ...formData, platform: val })}
           />
+          <p className="text-xs text-gray-400 mt-2">
+            * سيتم خصم{" "}
+            <span className="font-bold text-white">{formData.budget}</span> من
+            رصيدك لكل منصة يتم اختيارها.
+          </p>
         </div>
         <div>
-          <Label>اسم الإعلان</Label>
+          <Label>اسم الحملة</Label>
           <Input
             name="name"
             value={formData.name}
@@ -262,22 +323,26 @@ export default function CreateAdsForm({ onSuccess, onCancel }) {
         </div>
 
         <div className="md:col-span-2">
-          <Label>هدف الإعلان</Label>
-          <Textarea
-            name="objective"
+          <ObjectivePicker
             value={formData.objective}
-            onChange={handleInputChange}
+            onChange={(val) => setFormData({ ...formData, objective: val })}
           />
         </div>
+
+        <ObjectiveSelector
+          formData={formData}
+          onChange={setFormData}
+          lang={lang}
+        />
 
         {/* Calculated Results Section */}
         <div className="flex flex-col gap-4 border-t border-[#424e6c] pt-6 mt-4">
           <div className="flex justify-between items-center">
             <span className="font-medium text-[#a4b0c0]">
-              الميزانية اليومية المتوقعة:
+              الميزانية الإجمالية المتوقعة:
             </span>
             <span className="font-bold text-white text-lg">
-              {dailySpend.toFixed(2)}
+              {formatPrice(dailySpend)}
             </span>
           </div>
           <div className="flex justify-between items-center">
@@ -289,53 +354,52 @@ export default function CreateAdsForm({ onSuccess, onCancel }) {
             </span>
           </div>
         </div>
-      </div>
-      <div className="flex flex-col gap-2">
-        <label
-          htmlFor="budgetSlider"
-          className="text-lg font-medium text-[#a4b0c0]"
-        >
-          الميزانية الإجمالية
-        </label>
-        <div className="flex items-center gap-4">
-          <input
-            type="range"
-            name="budget"
-            id="budget"
-            min="0"
-            max="5000"
-            step="100"
-            value={formData.budget}
-            onChange={handleInputChange}
-            className="w-full h-2 bg-[#205fff] rounded-md appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:bg-[#2dffff] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-md"
-          />
-          <span className="text-xl font-bold text-white min-w-[90px] text-right">
-            {formData.budget}
-          </span>
-        </div>
-      </div>
 
-      {/* Duration Slider Section */}
-      <div className="flex flex-col gap-2">
-        <label
-          htmlFor="daysSlider"
-          className="text-lg font-medium text-[#a4b0c0]"
-        >
-          مدة الحملة بالأيام
-        </label>
-        <div className="flex items-center gap-4">
-          <input
-            type="range"
-            id="daysSlider"
-            min="1"
-            max="90"
-            value={days}
-            onChange={(e) => setDays(parseInt(e.target.value))}
-            className="w-full h-2 bg-[#2966ff] rounded-md appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:bg-[#3eedc7] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-md"
-          />
-          <span className="text-xl font-bold text-white min-w-[90px] text-right">
-            {days} يوم
-          </span>
+        <div>
+          <Label
+            htmlFor="budgetSlider"
+            className="text-lg font-medium text-[#a4b0c0]"
+          >
+            الميزانية اليومية الإجمالية
+          </Label>
+          <div className="flex items-center gap-4 ">
+            <Input
+              type="number"
+              name="budget"
+              id="budget"
+              min="100"
+              max="5000"
+              step="50"
+              value={formData.budget || "100"}
+              onChange={handleInputChange}
+            />
+            <span className="text-xl font-bold text-white min-w-[90px] text-right">
+              {formatPrice(formData.budget || 100)}
+            </span>
+          </div>
+
+          {/* Duration Slider Section */}
+
+          <Label
+            htmlFor="daysSlider"
+            className="text-lg font-medium text-[#a4b0c0]"
+          >
+            مدة الحملة بالأيام
+          </Label>
+          <div className="flex items-center gap-4">
+            <Input
+              type="number"
+              id="daysSlider"
+              min="2"
+              max="30"
+              value={days}
+              onChange={(e) => setDays(Number(e.target.value) || 2)} // ✅ خليه دايمًا رقم
+            />
+
+            <span className="text-xl font-bold text-white min-w-[90px] text-right">
+              {days} يوم
+            </span>
+          </div>
         </div>
       </div>
 

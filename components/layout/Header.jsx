@@ -23,14 +23,14 @@ export const Header = () => {
       exit={{ opacity: 0, y: 20 }}
       className="bg-[#0f1020] text-gray-200 w-full relative"
     >
-      <header className="fixed top-0 left-0 pb-4 right-0  z-50 bg-[#0f1020]/90 backdrop-blur-md border-b border-gray-800">
-        <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
+      <header className="fixed top-0 left-0 pb-2 right-0  z-50  backdrop-blur-md   rounded-b-4xl">
+        <div className="mx-auto max-w-7xl px-4 pt-2 flex items-center justify-between">
           {/* Logo */}
           <Link href={"/"} className="flex items-center gap-3">
             <div className="h-10 w-10 hidden md:block rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-500  items-center justify-center font-black text-[#0f1020] text-lg"></div>
-            <div className="font-extrabold text-xl">
+            <h1 className="font-extrabold text-xl text-emerald-500">
               {lang === "ar" ? "تقرير" : "TQRYR"}
-            </div>
+            </h1>
           </Link>
 
           {/* Navigation */}
@@ -52,20 +52,24 @@ export const Header = () => {
           {/* Buttons */}
           <div className="flex items-center gap-2">
             {/* Language Toggle */}
-            <Button
+            <span
               onClick={toggleLang}
-              className="flex items-center gap-1 px-3 py-2 rounded-xl border border-gray-600 hover:border-gray-400 transition"
+              className="flex items-center gap-1 px-2 py-1 rounded-full border border-gray-600 hover:border-gray-400 text-sm transition"
             >
               {lang === "ar" ? "EN" : "AR"}
-            </Button>
+            </span>
 
             <select
               value={currency}
               onChange={(e) => setCurrency(e.target.value)}
-              className="px-3 py-2 text-sm rounded-xl bg-black border border-white/20"
+              className="px-1  text-sm rounded-xl border border-white/20"
             >
-              <option value="SAR">SAR</option>
-              <option value="USD">USD</option>
+              <option className="bg-black" value="SAR">
+                SAR
+              </option>
+              <option className="bg-black" value="USD">
+                USD
+              </option>
             </select>
 
             {/* Admin / Dashboard */}
@@ -98,7 +102,7 @@ export const Header = () => {
                 </Link>
                 <Link
                   href="/register"
-                  className="px-4 py-2 rounded-xl bg-gradient-to-l from-emerald-400 to-cyan-500 text-[#0f1020] font-semibold hover:shadow-lg hover:shadow-emerald-500/30 transition"
+                  className="px-2 py-1 md:px-4 md:py-2 md:text text-sm rounded-xl bg-gradient-to-l from-emerald-400 to-cyan-500  text-[#0f1020] font-semibold hover:shadow-lg hover:shadow-emerald-500/30 transition"
                 >
                   {lang === "ar" ? "إنشاء حساب" : "Register"}
                 </Link>
@@ -107,9 +111,9 @@ export const Header = () => {
 
             {/* Mobile Menu Button */}
             <div className="md:hidden">
-              <Button onClick={() => setMenuOpen(!menuOpen)}>
-                <Menu className="w-6 h-6 text-white" />
-              </Button>
+              <span onClick={() => setMenuOpen(!menuOpen)}>
+                <Menu className="w-7 h-7 text-white" />
+              </span>
             </div>
           </div>
         </div>
@@ -124,7 +128,7 @@ export const Header = () => {
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ duration: 0.7 }}
+              transition={{ duration: 0.3 }}
               className="fixed top-0 right-0 h-full w-2/3 bg-gray-900 shadow-xl p-6 z-50 md:hidden flex flex-col gap-4"
             >
               {user?.role === "admin" && (

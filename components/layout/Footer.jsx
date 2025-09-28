@@ -152,18 +152,18 @@ export const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <Mail className="h-4 w-4 text-primary" />
-                <span className="text-muted-foreground">info@taqreer.com</span>
+                <span className="text-muted-foreground">info@tqryrads.com</span>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="h-4 w-4 text-primary" />
-                <span className="text-muted-foreground">+966 11 123 4567</span>
+                <span className="text-muted-foreground">+966 55 574 4807</span>
               </div>
               <div className="flex items-center gap-3">
                 <MapPin className="h-4 w-4 text-primary" />
                 <span className="text-muted-foreground">
                   {lang === "ar"
-                    ? "الرياض، المملكة العربية السعودية"
-                    : "Riyadh, Saudi Arabia"}
+                    ? "مكة المكرمة. المملكة العربية السعودية"
+                    : "Maka Elmokarama, Saudi Arabia"}
                 </span>
               </div>
             </div>

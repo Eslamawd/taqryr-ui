@@ -4,6 +4,7 @@ import {
   FaGoogle,
   FaTiktok,
   FaInstagram,
+  FaYoutube,
 } from "react-icons/fa";
 import { Label } from "../ui/Label";
 
@@ -12,49 +13,58 @@ export default function PlatformPicker({ value, onChange }) {
     {
       id: "snap",
       name: "Snapchat",
-      icon: <FaSnapchatGhost className="text-yellow-400 text-2xl" />,
+      icon: <FaSnapchatGhost className="text-yellow-400 text-3xl w-16 h-16" />,
     },
     {
       id: "meta",
       name: "Meta",
-      icon: <FaFacebook className="text-blue-500 text-2xl" />,
+      icon: <FaFacebook className="text-blue-500 text-3xl w-16 h-16" />,
     },
     {
       id: "google",
       name: "Google",
-      icon: <FaGoogle className="text-red-500 text-2xl" />,
+      icon: <FaGoogle className="text-red-500 text-3xl w-16 h-16" />,
     },
     {
       id: "tiktok",
       name: "TikTok",
-      icon: <FaTiktok className="text-black dark:text-white text-2xl" />,
+      icon: (
+        <FaTiktok className="text-black dark:text-white text-3xl w-16 h-16" />
+      ),
     },
     {
       id: "instagram",
       name: "Instagram",
-      icon: <FaInstagram className="text-pink-500 text-2xl" />,
+      icon: <FaInstagram className="text-pink-500 text-3xl w-16 h-16" />,
+    },
+    {
+      id: "youtube",
+      name: "Youtube",
+      icon: <FaYoutube className="text-red-500 text-3xl w-16 h-16" />,
     },
   ];
 
   return (
-    <div>
+    <div className="w-full">
       <Label>المنصة</Label>
-      <div className="grid md:grid-cols-7 grid-cols-4 gap-3 mt-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mt-2">
         {platforms.map((p) => (
           <span
             key={p.id}
-            type="button"
             onClick={() => onChange(p.id)}
-            className={`flex flex-col items-center cursor-pointer justify-center p-4 rounded-lg border-2 transition
+            className={`
+             relative flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-300 transform shadow-md
               ${
                 value === p.id
-                  ? "border-blue-500 bg-gray-800"
-                  : "border-gray-600 bg-gray-900"
+                  ? "border-blue-500 bg-blue-900 scale-105"
+                  : "border-gray-600 bg-gray-900 hover:border-blue-400 hover:bg-gray-800 hover:scale-105"
               }
             `}
           >
             {p.icon}
-            <span className="mt-1 text-sm">{p.name}</span>
+            <span className="mt-2 text-sm font-medium text-white">
+              {p.name}
+            </span>
           </span>
         ))}
       </div>

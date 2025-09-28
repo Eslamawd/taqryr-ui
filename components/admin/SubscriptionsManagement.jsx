@@ -109,7 +109,9 @@ const SubscriptionsManagement = () => {
       className="bg-[#0f1020] text-gray-200"
     >
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Subscriptions Management</h2>
+        <h2 className="text-2xl font-bold">
+          {lang === "ar" ? "إدارة الاشتراكات" : "Subscriptions Management"}
+        </h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -117,7 +119,7 @@ const SubscriptionsManagement = () => {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <SubtitlesIcon className="h-4 w-4 text-muted-foreground" />
-              Total Subscription
+              {lang === "ar" ? "  إجمالي الاشتراكات " : "Total Subscription"}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -140,13 +142,14 @@ const SubscriptionsManagement = () => {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-              Revenue
+              {lang === "ar" ? "ربح" : "Revenue"}
             </CardTitle>
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <div className="h-8 w-20 bg-muted animate-pulse rounded"></div>
+              <div className="h-8 w-20 bg-muted animate-pulse rounded">
+                <Loader2 className="w12 h-12" />
+              </div>
             ) : (
               <motion.div
                 className="text-2xl font-bold"
@@ -213,7 +216,12 @@ const SubscriptionsManagement = () => {
           <Pagination
             currentPage={currentPage}
             lastPage={lastPage}
-            onPageChange={(page) => setCurrentPage(page)}
+            total={total}
+            label={lang === "ar" ? "الاشتراكات" : "Subscriptions"}
+            onPrev={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            onNext={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, lastPage))
+            }
           />
         </>
       )}

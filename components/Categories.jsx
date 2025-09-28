@@ -4,6 +4,7 @@ import PlatformCarousel3D from "./Home/PlatformCarousel3D";
 
 import { motion } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
+import Link from "next/link";
 
 export const Categories = () => {
   const { lang } = useLanguage();
@@ -245,12 +246,12 @@ export const Categories = () => {
             >
               {t.register}
             </a>
-            <a
-              href="#contact"
+            <Link
+              href="/contact"
               className="px-5 py-3 rounded-2xl border border-white/20 hover:border-white/40 transition"
             >
               {t.contact}
-            </a>
+            </Link>
           </div>
         </div>
       </section>

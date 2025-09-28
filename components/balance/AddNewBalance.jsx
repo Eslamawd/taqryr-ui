@@ -208,7 +208,7 @@ function AddNewBalance() {
                   disabled
                   value="moyser"
                 >
-                  {lang === "ar" ? "ميسر" : "Moyser"}
+                  {lang === "ar" ? "بوابة الدفع" : "Payment gateway"}
                 </TabsTrigger>
                 <TabsTrigger className="cursor-pointer m-2" value="banking">
                   {lang === "ar" ? "بنك" : "Banking"}

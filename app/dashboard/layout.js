@@ -7,7 +7,7 @@ export default function Layout({ children }) {
   const router = useRouter();
 
   if (!user) {
-    router.back();
+    router.push("/");
     return null;
   }
 

@@ -11,7 +11,7 @@ const translations = { en, ar };
 const LanguageContext = createContext(null);
 
 export const LanguageProvider = ({ children }) => {
-  const [lang, setLang] = useState("en");
+  const [lang, setLang] = useState("ar");
 
   // دالة الترجمة
   const t = useCallback((key) => translations[lang]?.[key] || key, [lang]);

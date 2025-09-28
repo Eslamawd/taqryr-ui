@@ -31,6 +31,7 @@ import Pagination from "../layout/Pagination";
 import { loadAds } from "@/lib/adsApi";
 import { useCurrency } from "@/context/CurrencyContext";
 import { useLanguage } from "@/context/LanguageContext";
+import { useAuth } from "@/context/AuthContext";
 
 const PLATFORM_COLORS = [
   "#10b981",
@@ -48,17 +49,16 @@ export default function AdsDashboard() {
   const [ads, setAds] = useState([]);
   const [selectedPlatform, setSelectedPlatform] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [currency, setCurrency] = useState("SAR");
+  const { user } = useAuth();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
   const [total, setTotal] = useState(0);
-  const perPage = 5;
 
   // Fetch ads
-  const fetchAds = async () => {
+  const fetchAds = async (page) => {
     try {
-      const response = await loadAds(1);
+      const response = await loadAds(page);
       setAds(response?.ads.data || []);
       setCurrentPage(response.ads.current_page);
       setLastPage(response.ads.last_page);
@@ -103,6 +103,25 @@ export default function AdsDashboard() {
     return sum;
   }, [prepared]);
 
+  function getRemainingDays(endDate) {
+    const today = new Date();
+    const end = new Date(endDate);
+    const diffTime = end - today; // الفرق بالميلي ثانية
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // تحويل لأيام
+    return diffDays > 0 ? diffDays : 0; // لو انتهت، ترجع 0
+  }
+
+  const remainingDays = user.subscripe
+    ? getRemainingDays(user.subscripe.end_date)
+    : 0;
+
+  useEffect(() => {
+    if (remainingDays > 0) {
+      toast.success(`    باقتك الحالية${user.subscripe.plan}`);
+      toast.success(`: ${remainingDays} - يوم متبقي`);
+    }
+  }, [remainingDays]);
+
   return (
     <main
       dir={lang === "ar" ? "rtl" : "ltr"}
@@ -110,16 +129,20 @@ export default function AdsDashboard() {
     >
       {/* Top Bar */}
       <header className="sticky mt-32 bg-[#0f1020]/80 backdrop-blur border-b border-white/10 z-10">
-        <div className="w-full flex items-center justify-between">
+        <div className="w-full flex items-center justify-center md:justify-between">
           <PlatformPicker
             value={selectedPlatform}
             onChange={setSelectedPlatform}
           />
-          <div className="flex gap-2">
-            <button onClick={() => setIsDialogOpen(true)} className="h-16 m-3">
-              {t("create")}
-            </button>
-          </div>
+          <button
+            disabled={remainingDays === 0}
+            onClick={() => setIsDialogOpen(true)}
+            className={`h-10 m-3 ${
+              remainingDays === 0 ? "cursor-not-allowed opacity-50" : ""
+            }`}
+          >
+            {t("create")}
+          </button>
         </div>
       </header>
 

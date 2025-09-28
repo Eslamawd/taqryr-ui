@@ -167,9 +167,15 @@ const AdsManagement = () => {
                         {new Date(ad.end_date).toLocaleDateString()}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button className="m-2" onClick={() => adNewAd(ad.id)}>
-                          {lang === "ar" ? "إرسال" : "Send To"}
-                        </Button>
+                        {ad.platform_ad_id === null ? (
+                          <Button
+                            className="m-2"
+                            onClick={() => adNewAd(ad.id)}
+                          >
+                            {lang === "ar" ? "إرسال" : "Send To"}
+                          </Button>
+                        ) : null}
+
                         <Button
                           className="m-2"
                           onClick={() => toggleVideoPreview(ad)}

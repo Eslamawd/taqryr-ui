@@ -47,7 +47,7 @@ const SubscriptionCard = ({ plan, isSelected, onClick, onRenew }) => {
           discount > 20 ? "text-yellow-400" : "text-white"
         }`}
       >
-        {lang === "ar" ? plan.name_ar : plan.name}
+        {lang === "ar" ? plan.name : plan.name}
       </h3>
       <h3
         className={`text-xl md:text-2xl font-bold mb-2 ${
@@ -131,11 +131,12 @@ export default function SubscriptionPlans() {
         setShowRenewDialog(false);
         return;
       }
-      const res = renewSubscriptionAPI(selectedPlan.id);
-      // await renewPlanAPI(selectedPlan.id);  // ← هنا
-      // توصل بالـ backend
+      const res = await renewSubscriptionAPI(selectedPlan.id);
       toast.success(lang === "ar" ? "تم التجديد بنجاح" : "Plan renewed!");
       toast.success(`${res.message}`);
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
       setShowRenewDialog(false);
     } catch (err) {
       toast.error(lang === "ar" ? "فشل التجديد" : "Renew failed");
@@ -171,7 +172,7 @@ export default function SubscriptionPlans() {
             </AlertDialogTitle>
             <AlertDialogDescription>
               {lang === "ar"
-                ? `هل تريد تجديد خطة ${selectedPlan?.name_ar} ؟`
+                ? `هل تريد تجديد خطة ${selectedPlan?.name} ؟`
                 : `Do you want to renew the ${selectedPlan?.name} plan?`}
             </AlertDialogDescription>
           </AlertDialogHeader>
