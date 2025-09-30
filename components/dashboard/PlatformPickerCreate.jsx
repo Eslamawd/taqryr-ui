@@ -14,21 +14,26 @@ export default function PlatformPickerCreate({ value = [], onChange }) {
     {
       id: "snap",
       name: "Snapchat",
+      status: true,
       icon: <FaSnapchatGhost className="text-yellow-400 text-3xl w-16 h-16" />,
     },
     {
       id: "meta",
       name: "Facebook",
+
+      status: false,
       icon: <FaFacebook className="text-blue-500 text-3xl w-16 h-16" />,
     },
     {
       id: "google",
       name: "Google",
+      status: false,
       icon: <FaGoogle className="text-red-500 text-3xl w-16 h-16" />,
     },
     {
       id: "tiktok",
       name: "TikTok",
+      status: false,
       icon: (
         <FaTiktok className="text-black dark:text-white text-3xl w-16 h-16" />
       ),
@@ -36,11 +41,13 @@ export default function PlatformPickerCreate({ value = [], onChange }) {
     {
       id: "instagram",
       name: "Instagram",
+      status: false,
       icon: <FaInstagram className="text-pink-500 text-3xl w-16 h-16" />,
     },
     {
       id: "youtube",
       name: "Youtube",
+      status: false,
       icon: <FaYoutube className="text-red-500 text-3xl w-16 h-16" />,
     },
   ];
@@ -63,9 +70,11 @@ export default function PlatformPickerCreate({ value = [], onChange }) {
             <span
               key={p.id}
               type="button"
-              onClick={() => togglePlatform(p.id)}
+              disabled={p.status ? false : true}
+              onClick={() => p.status && togglePlatform(p.id)}
               className={`
                 relative flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-300 transform shadow-md
+                ${p.status ? "" : "cursor-not-allowed"}
                 ${
                   selected
                     ? "border-blue-500 bg-blue-900 scale-105"

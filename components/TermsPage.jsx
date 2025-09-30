@@ -169,9 +169,7 @@ export const TermsPage = () => {
       className="min-h-screen bg-[#0f1020] text-gray-200 py-16 px-6 md:px-20 lg:px-40"
     >
       <h1 className="text-3xl font-extrabold mb-12 text-center text-white">
-        {lang === "ar"
-          ? "شروط الخدمة – منصة تقرير (TQRYR)"
-          : "Terms of Service – TQRYR Platform"}
+        {lang === "ar" ? "شروط الخدمة    " : "Terms of Service   "}
       </h1>
 
       <div className="space-y-6">

@@ -248,10 +248,7 @@ export default function AdsDashboard() {
       {/* Create Ad Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-800 text-white">
-          <DialogHeader>
-            <DialogTitle>{t("create_new_ad")}</DialogTitle>
-            <DialogDescription></DialogDescription>
-          </DialogHeader>
+          <DialogHeader></DialogHeader>
           <CreateAdsForm
             onSuccess={() => {
               setIsDialogOpen(false);

@@ -89,12 +89,25 @@ export default function CreateAdsForm({ onSuccess, onCancel }) {
 
       // لو صورة ندخلها على طول
       if (file.type.startsWith("image/")) {
-        const preview = URL.createObjectURL(file);
-        setFormData((prev) => ({
-          ...prev,
-          files: [...prev.files, file],
-          filePreviews: [...prev.filePreviews, preview],
-        }));
+        const img = new Image();
+        img.onload = function () {
+          const width = img.width;
+          const height = img.height;
+
+          if (width < 400 || height < 700) {
+            toast.error(`جودة الصورة ${file.name} قليلة (${width}x${height})`);
+            return;
+          }
+
+          // ✅ الصورة صالحة → أضف للـ state
+          const preview = URL.createObjectURL(file);
+          setFormData((prev) => ({
+            ...prev,
+            files: [...prev.files, file],
+            filePreviews: [...prev.filePreviews, preview],
+          }));
+        };
+        img.src = URL.createObjectURL(file);
         return;
       }
 

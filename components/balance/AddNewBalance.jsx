@@ -19,6 +19,7 @@ import {
   getBalanceUser,
 } from "@/lib/walletApi";
 import { useLanguage } from "@/context/LanguageContext";
+import { useCurrency } from "@/context/CurrencyContext";
 
 function AddNewBalance() {
   const [userBalance, setUserBalance] = useState(0);
@@ -28,6 +29,8 @@ function AddNewBalance() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [activeTab, setActiveTab] = useState("banking");
   const { lang } = useLanguage();
+
+  const { formatPrice } = useCurrency();
   const [formData, setFormData] = useState({
     imageFile: null,
     imageUrl: "",
@@ -178,7 +181,7 @@ function AddNewBalance() {
                   {lang === "ar" ? "رصيدك الحالي" : "Your Current Balance"}
                 </h2>
                 <div className="text-3xl font-bold mt-2">
-                  ${userBalance || 0}
+                  {formatPrice(userBalance || 0)}
                 </div>
               </div>
             </div>

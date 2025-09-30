@@ -9,6 +9,7 @@ import {
   Rocket,
   CheckCircle2,
 } from "lucide-react";
+import Link from "next/link";
 
 export const Hero = () => {
   const { lang } = useLanguage();
@@ -90,28 +91,28 @@ export const Hero = () => {
 
             {/* CTA Buttons */}
             <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-3">
-              <a
-                href="/auth/register?source=hero"
+              <Link
+                href="/register"
                 aria-label={
                   lang === "ar"
                     ? "التسجيل في منصة تقرير كشركة تسويق"
                     : "Register on Taqreer as a marketing company"
                 }
-                className="px-6 py-3 rounded-2xl bg-gradient-to-l from-emerald-400 to-cyan-500 text-[#0f1020] font-bold shadow-lg hover:scale-105 transition-transform"
+                className="px-6 py-3 rounded-2xl bg-gradient-to-l z-50 from-emerald-400 to-cyan-500 text-[#0f1020] font-bold shadow-lg hover:scale-105 cursor-pointer transition-transform"
               >
                 {t.getStarted}
-              </a>
-              <a
-                href="#how"
+              </Link>
+              <Link
+                href="/#how"
                 aria-label={
                   lang === "ar"
                     ? "التعرف على كيفية عمل منصة تقرير"
                     : "Learn how Taqreer works"
                 }
-                className="px-6 py-3 rounded-2xl border border-white/20 hover:border-white/40 transition flex items-center gap-2"
+                className="px-6 py-3 z-50 rounded-2xl border border-white/20 hover:border-white/40 transition flex items-center gap-2"
               >
                 {t.howItWorks} <ChevronLeft className="h-4 w-4" />
-              </a>
+              </Link>
             </div>
 
             {/* CTA Note */}

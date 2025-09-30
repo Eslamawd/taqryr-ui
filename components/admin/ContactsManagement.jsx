@@ -67,7 +67,9 @@ const ContactsManagement = () => {
       className="bg-[#0f1020] text-gray-200"
     >
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Contacts Management</h2>
+        <h2 className="text-2xl font-bold">
+          {lang === "ar" ? "إدارة  الاتصال" : "Contacts Management"}
+        </h2>
       </div>
 
       {contacts.length === 0 ? (
@@ -78,9 +80,13 @@ const ContactsManagement = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>ID</TableHead>
-                <TableHead>phone</TableHead>
-                <TableHead>E-mail</TableHead>
-                <TableHead>Message</TableHead>
+                <TableHead>
+                  {lang === "ar" ? "الهاتف والواتساب" : "Phone&WhatsApp"}
+                </TableHead>
+                <TableHead>
+                  {lang === "ar" ? "بريد إلكتروني" : "E-mail"}
+                </TableHead>
+                <TableHead>{lang === "ar" ? "رسالة" : "Message"}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -92,10 +98,18 @@ const ContactsManagement = () => {
                       {con.phone}{" "}
                       <FaWhatsapp
                         onClick={() => handleWhatsAppRedirect(con.phone)}
-                        className="h-6 w-6 text-green-500"
+                        className="h-6 cursor-pointer w-6 text-green-500"
                       />
                     </TableCell>
-                    <TableCell>{con.email}</TableCell>
+                    <TableCell>
+                      {" "}
+                      <a
+                        href={`mailto:${con.email}`}
+                        className="text-blue-500  hover:text-white hover:underline-offset-2"
+                      >
+                        {con.email}
+                      </a>
+                    </TableCell>
                     <TableCell>{con.message}</TableCell>
                   </TableRow>
                 </React.Fragment>

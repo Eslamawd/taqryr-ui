@@ -18,7 +18,7 @@ export default function TargetRow({
     <div className="bg-gray-800 rounded-xl p-4 space-y-4 mt-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <MultiSelect
-          label="البلد"
+          label="الدوله"
           name="countries"
           options={countries}
           value={data.country}
