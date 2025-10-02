@@ -139,13 +139,32 @@ const PlanSubManagement = () => {
         </CardContent>
       </Card>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-black">
+      <Dialog
+        open={isDialogOpen}
+        dir={lang === "ar" ? "rtl" : "ltr"}
+        onOpenChange={setIsDialogOpen}
+      >
+        <DialogContent
+          dir={lang === "ar" ? "rtl" : "ltr"}
+          className="max-w-4xl max-h-[90vh] overflow-y-auto bg-black"
+        >
           <DialogHeader>
-            <DialogTitle>{isNew ? "Add New Plan" : "Update Plan"}</DialogTitle>
+            <DialogTitle dir={lang === "ar" ? "rtl" : "ltr"}>
+              {isNew
+                ? lang === "ar"
+                  ? "إضافة خطة جديدة"
+                  : "Add New Plan"
+                : lang === "ar"
+                ? "تحديث الخطة"
+                : "Update Plan"}
+            </DialogTitle>
             <DialogDescription>
               {isNew
-                ? "Fill in the details to create a new plan."
+                ? lang === "ar"
+                  ? "  املأ التفاصيل لإنشاء خطة جديدة."
+                  : "Fill in the details to create a new plan."
+                : lang === "ar"
+                ? "حرّر تفاصيل الخطة."
                 : "Edit the plan details."}
             </DialogDescription>
           </DialogHeader>
@@ -216,7 +235,7 @@ const SubscriptionCard = ({ plan, onEdit, onDelete }) => {
     >
       {/* العنوان */}
       <h3 className="text-xl md:text-2xl font-bold mb-2 text-white">
-        {lang === "ar" ? plan.name_ar : plan.name}
+        {lang === "ar" ? plan.name : plan.name}
       </h3>
 
       {/* السعر */}

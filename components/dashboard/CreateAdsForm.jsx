@@ -18,10 +18,13 @@ import { useCurrency } from "@/context/CurrencyContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { InfoIcon } from "lucide-react";
 import ObjectiveSelector from "./ObjectiveSlector";
+import { handleMultipleFileUpload } from "@/utils/fileHandler";
 
 export default function CreateAdsForm({ onSuccess, onCancel }) {
   const [formData, setFormData] = useState({
     name: "",
+    name_brand: "",
+    headline: "",
     platform: [],
     objective: "",
     budget: "100",
@@ -30,6 +33,7 @@ export default function CreateAdsForm({ onSuccess, onCancel }) {
     iphone_id: "",
     android_id: "",
     name_app: "",
+
     logo_image: "",
     end_date: "",
     files: [],
@@ -69,78 +73,6 @@ export default function CreateAdsForm({ onSuccess, onCancel }) {
 
   const handleInputChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleMultipleFileUpload = (e) => {
-    const files = Array.from(e.target.files);
-
-    files.forEach((file) => {
-      // ✅ التحقق من النوع
-      if (!file.type.startsWith("video/") && !file.type.startsWith("image/")) {
-        toast.error("الملف لازم يكون صورة أو فيديو");
-        return;
-      }
-
-      // ✅ التحقق من الحجم (مثال: 30MB)
-      if (file.size > 30 * 1024 * 1024) {
-        toast.error(`الملف ${file.name} أكبر من 30MB`);
-        return;
-      }
-
-      // لو صورة ندخلها على طول
-      if (file.type.startsWith("image/")) {
-        const img = new Image();
-        img.onload = function () {
-          const width = img.width;
-          const height = img.height;
-
-          if (width < 400 || height < 700) {
-            toast.error(`جودة الصورة ${file.name} قليلة (${width}x${height})`);
-            return;
-          }
-
-          // ✅ الصورة صالحة → أضف للـ state
-          const preview = URL.createObjectURL(file);
-          setFormData((prev) => ({
-            ...prev,
-            files: [...prev.files, file],
-            filePreviews: [...prev.filePreviews, preview],
-          }));
-        };
-        img.src = URL.createObjectURL(file);
-        return;
-      }
-
-      // لو فيديو: نعمل تحقق من الطول والأبعاد
-      const video = document.createElement("video");
-      video.preload = "metadata";
-      video.onloadedmetadata = function () {
-        window.URL.revokeObjectURL(video.src);
-
-        const duration = video.duration;
-        const width = video.videoWidth;
-        const height = video.videoHeight;
-
-        if (duration > 180) {
-          toast.error(`الفيديو ${file.name} أطول من 3 دقائق`);
-          return;
-        }
-
-        if (width < 540 || height < 960) {
-          toast.error(`جودة الفيديو ${file.name} قليلة (${width}x${height})`);
-          return;
-        }
-
-        // ✅ الفيديو صالح → أضف للـ state
-        const preview = URL.createObjectURL(file);
-        setFormData((prev) => ({
-          ...prev,
-          files: [...prev.files, file],
-          filePreviews: [...prev.filePreviews, preview],
-        }));
-      };
-      video.src = URL.createObjectURL(file);
-    });
   };
 
   const handleRemoveFile = (index) => {
@@ -231,6 +163,8 @@ export default function CreateAdsForm({ onSuccess, onCancel }) {
         "name",
         "objective",
         "start_date",
+        "name_brand",
+        "headline",
         "end_date",
         "link",
         "name_app",
@@ -330,7 +264,26 @@ export default function CreateAdsForm({ onSuccess, onCancel }) {
           <Label>اسم الحملة</Label>
           <Input
             name="name"
+            required
             value={formData.name}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div>
+          <Label>اسم العلامة التجارية </Label>
+          <Input
+            name="name_brand"
+            required
+            value={formData.name_brand}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div>
+          <Label> العنوان</Label>
+          <Input
+            name="headline"
+            value={formData.headline}
+            required
             onChange={handleInputChange}
           />
         </div>
@@ -424,10 +377,9 @@ export default function CreateAdsForm({ onSuccess, onCancel }) {
             اسحب أو اضغط للرفع
             <input
               type="file"
-              accept="image/*,video/*"
-              multiple
+              accept="image,video"
               className="hidden"
-              onChange={handleMultipleFileUpload}
+              onChange={(e) => handleMultipleFileUpload(e, setFormData)}
             />
           </label>
         </div>
@@ -467,6 +419,8 @@ export default function CreateAdsForm({ onSuccess, onCancel }) {
           <div className="mt-6">
             <h3 className="text-lg font-bold mb-2">معاينة الفيديو (موبايل)</h3>
             <PhoneVideoPreview
+              brandName={formData.name_brand}
+              headline={formData.headline}
               videoUrl={formData.filePreviews.find((_, idx) =>
                 formData.files[idx].type.startsWith("video")
               )}

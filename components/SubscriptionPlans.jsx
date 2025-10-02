@@ -112,6 +112,14 @@ export default function SubscriptionPlans() {
     fetchPlanSubs();
   }, []);
 
+  function getRemainingDays(endDate) {
+    const today = new Date();
+    const end = new Date(endDate);
+    const diffTime = end - today; // الفرق بالميلي ثانية
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // تحويل لأيام
+    return diffDays > 0 ? diffDays : 0; // لو انتهت، ترجع 0
+  }
+
   const handleRenewPlan = (plan) => {
     setSelectedPlan(plan);
     setShowRenewDialog(true);
@@ -122,6 +130,18 @@ export default function SubscriptionPlans() {
       if (!user) {
         toast.error(
           lang === "ar" ? "يرجى تسجيل الدخول أولاً" : "Please log in first"
+        );
+        setShowRenewDialog(false);
+        return;
+      }
+
+      const daySub = getRemainingDays(user.subscripe.end_date);
+
+      if (daySub > 7) {
+        toast.error(
+          lang === "ar"
+            ? `لا يمكنك التجديد الآن، متبقي ${daySub} يوم`
+            : `You can renew only when less than 7 days are left (Remaining: ${daySub} days)`
         );
         setShowRenewDialog(false);
         return;

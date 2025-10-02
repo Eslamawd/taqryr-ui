@@ -173,9 +173,9 @@ const SubscriptionsManagement = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>ID</TableHead>
-                <TableHead>From</TableHead>
-                <TableHead>To</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{lang === "ar" ? " من" : "From"}</TableHead>
+                <TableHead>{lang === "ar" ? " إلى" : "To"}</TableHead>
+                <TableHead>{lang === "ar" ? "الحالة" : "Status"}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -190,21 +190,28 @@ const SubscriptionsManagement = () => {
                       {new Date(sub.end_date).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
-                      <span
-                        className={
-                          Date.now() >= new Date(sub.end_date).getTime()
-                            ? "text-red-600" // انتهى الاشتراك
-                            : Date.now() >= new Date(sub.start_date).getTime()
-                            ? "text-green-600" // نشط الآن
-                            : "text-yellow-600" // لم يبدأ بعد
+                      {(() => {
+                        const now = Date.now();
+                        const start = new Date(sub.start_date).getTime();
+                        const end = new Date(sub.end_date).getTime();
+
+                        console.log(now, start, end);
+
+                        let statusText = "";
+                        let statusColor = "";
+
+                        if (now >= end) {
+                          statusText = "Expired";
+                          statusColor = "text-red-600";
+                        } else if (now > start && now < end) {
+                          statusText = "Active";
+                          statusColor = "text-green-600";
                         }
-                      >
-                        {Date.now() >= new Date(sub.end_date).getTime()
-                          ? "Expired"
-                          : Date.now() >= new Date(sub.start_date).getTime()
-                          ? "Active"
-                          : "Pending"}
-                      </span>
+
+                        return (
+                          <span className={statusColor}>{statusText}</span>
+                        );
+                      })()}
                     </TableCell>
                   </TableRow>
                 </React.Fragment>

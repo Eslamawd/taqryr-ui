@@ -50,6 +50,7 @@ export default function TargetRow({
         <MultiSelect
           label="فئة العمر"
           name="age_group"
+          required
           options={targetingsSnap.ageGroups}
           value={data.age_group ? [data.age_group] : []}
           onChange={(_, v) => handle("age_group", v[0] || "")}

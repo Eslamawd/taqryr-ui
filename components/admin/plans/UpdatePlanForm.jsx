@@ -9,6 +9,7 @@ import { Separator } from "../../ui/Separator.jsx";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { updatePlanSub } from "@/lib/planSubApi.js";
+import { useLanguage } from "@/context/LanguageContext.jsx";
 
 function UpdatePlanForm({ plan, onSuccess, onCancel }) {
   const [formData, setFormData] = useState({
@@ -19,6 +20,7 @@ function UpdatePlanForm({ plan, onSuccess, onCancel }) {
       ? plan.features
       : [{ title: "", title_ar: "" }],
   });
+  const { lang } = useLanguage();
 
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -78,7 +80,9 @@ function UpdatePlanForm({ plan, onSuccess, onCancel }) {
     >
       {/* Plan Name */}
       <div className="space-y-2">
-        <Label htmlFor="name">Plan Name</Label>
+        <Label htmlFor="name">
+          {lang === "ar" ? "اسم الخطة" : "Plan Name"}
+        </Label>
         <Input
           id="name"
           name="name"
@@ -92,7 +96,7 @@ function UpdatePlanForm({ plan, onSuccess, onCancel }) {
 
       {/* Price */}
       <div className="space-y-2">
-        <Label htmlFor="price">Price ($)</Label>
+        <Label htmlFor="price"> {lang === "ar" ? "سعر الخطة" : "Price"} </Label>
         <Input
           id="price"
           name="price"
@@ -106,7 +110,10 @@ function UpdatePlanForm({ plan, onSuccess, onCancel }) {
 
       {/* Duration Days */}
       <div className="space-y-2">
-        <Label htmlFor="duration_days">Duration (Days)</Label>
+        <Label htmlFor="duration_days">
+          {" "}
+          {lang === "ar" ? "المدة (أيام)" : "Duration (Days)"}
+        </Label>
         <Input
           id="duration_days"
           name="duration_days"
@@ -122,7 +129,7 @@ function UpdatePlanForm({ plan, onSuccess, onCancel }) {
 
       {/* Features */}
       <div className="space-y-4">
-        <Label>Features</Label>
+        <Label> {lang === "ar" ? "المميزات " : "Features"}</Label>
         {formData.features.map((feature, index) => (
           <div
             key={index}
@@ -152,13 +159,13 @@ function UpdatePlanForm({ plan, onSuccess, onCancel }) {
                 variant="destructive"
                 onClick={() => removeFeature(index)}
               >
-                Remove
+                {lang === "ar" ? "إزالة" : "Remove"}
               </Button>
             )}
           </div>
         ))}
         <Button type="button" variant="outline" onClick={addFeature}>
-          + Add Feature
+          {lang === "ar" ? "إضافة ميزة+" : "+ Add Feature"}
         </Button>
       </div>
 
@@ -172,10 +179,16 @@ function UpdatePlanForm({ plan, onSuccess, onCancel }) {
           onClick={onCancel}
           disabled={isLoading}
         >
-          Cancel
+          {lang === "ar" ? "إلغاء " : "Cancel"}
         </Button>
         <Button type="submit" disabled={isLoading}>
-          {isLoading ? "Saving..." : "Update Plan"}
+          {isLoading
+            ? lang === "ar"
+              ? "حفظ ..."
+              : "Saving..."
+            : lang === "ar"
+            ? "تحديث الخطة"
+            : "Update Plan"}
         </Button>
       </div>
     </form>

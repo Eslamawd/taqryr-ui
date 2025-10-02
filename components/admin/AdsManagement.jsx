@@ -219,7 +219,7 @@ const AdsManagement = () => {
             {lang === "ar" ? "تفاصيل الإعلان" : "Ad Details"}
           </DialogTitle>
         </DialogHeader>
-        <DialogContent className="bg-black h-[80vh]   overflow-y-auto text-white">
+        <DialogContent className="bg-black h-[100vh]   overflow-y-auto text-white">
           {selectedAd && (
             <div className="flex flex-col justify-center items-center gap-6">
               {/* بيانات المستخدم */}
