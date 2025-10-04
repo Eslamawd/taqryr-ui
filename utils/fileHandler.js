@@ -50,10 +50,6 @@ export const handleMultipleFileUpload = async (e, setFormData) => {
     const height = video.videoHeight;
 
     // لو المتصفح مقدرش يجيب الأبعاد أو الطول → نرفض
-    if (!duration || !width || !height) {
-      toast.error(`الفيديو ${file.name} غير مدعوم أو غير صالح`);
-      return;
-    }
 
     // المدة (3s - 180s)
     if (duration < 3 || duration > 180) {
