@@ -7,11 +7,13 @@ export const handleMultipleFileUpload = async (e, setFormData) => {
   // ✅ لازم يكون صورة أو فيديو
   if (!file.type.startsWith("video/") && !file.type.startsWith("image/")) {
     toast.error("الملف لازم يكون صورة أو فيديو");
+    return;
   }
 
-  // ✅ الحجم الأقصى (30MB أو 32MB زي ما تحب)
+  // ✅ الحجم الأقصى (32MB)
   if (file.size > 32 * 1024 * 1024) {
     toast.error(`الملف ${file.name} أكبر من 32MB`);
+    return;
   }
 
   /**
@@ -34,6 +36,7 @@ export const handleMultipleFileUpload = async (e, setFormData) => {
       }));
     };
     img.src = URL.createObjectURL(file);
+    return;
   }
 
   /**
@@ -49,15 +52,27 @@ export const handleMultipleFileUpload = async (e, setFormData) => {
     const width = video.videoWidth;
     const height = video.videoHeight;
 
-    // لو المتصفح مقدرش يجيب الأبعاد أو الطول → نرفض
+    // لو المتصفح مقدرش يجيب الأبعاد أو الطول → نقبل الملف مع تحذير
+    if (!duration || !width || !height) {
+      toast.warning(
+        `تم قبول الفيديو ${file.name}، لكن المتصفح لم يتمكن من قراءة البيانات (قد يكون من iPhone)`
+      );
+      const preview = URL.createObjectURL(file);
+      setFormData((prev) => ({
+        ...prev,
+        files: [...prev.files, file],
+        filePreviews: [...prev.filePreviews, preview],
+      }));
+      return;
+    }
 
-    // المدة (3s - 180s)
+    // ✅ المدة (3s - 180s)
     if (duration < 3 || duration > 180) {
       toast.error(`الفيديو ${file.name} لازم يكون بين 3 و 180 ثانية`);
       return;
     }
 
-    // الأبعاد (540x960 على الأقل)
+    // ✅ الأبعاد (540x960 على الأقل)
     if (width < 540 || height < 960) {
       toast.error(`جودة الفيديو ${file.name} قليلة (${width}x${height})`);
       return;
@@ -73,7 +88,16 @@ export const handleMultipleFileUpload = async (e, setFormData) => {
   };
 
   video.onerror = function () {
-    toast.error(`الفيديو ${file.name} غير مدعوم`);
+    // 🔄 fallback لقبول فيديوهات MOV أو غير المقروءة
+    toast.warning(
+      `تم قبول الفيديو ${file.name} (صيغة غير مدعومة للمعاينة مثل iPhone MOV)`
+    );
+    const preview = URL.createObjectURL(file);
+    setFormData((prev) => ({
+      ...prev,
+      files: [...prev.files, file],
+      filePreviews: [...prev.filePreviews, preview],
+    }));
   };
 
   video.src = URL.createObjectURL(file);
