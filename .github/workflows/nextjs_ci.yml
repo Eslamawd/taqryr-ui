@@ -96,4 +96,5 @@ jobs:
             # 4. Build and Restart
             npm run build
             pm2 restart taqryr-ui || npm run start taqryr-ui 
+            pm2 delete taqryr-ui
             pm2 save
