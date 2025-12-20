@@ -95,5 +95,5 @@ jobs:
             npm ci
             # 4. Build and Restart
             npm run build
-            pm2 restart taqryr-ui || npm run start taqryr-ui 
+            pm2 restart taqryr-ui || pm2 start npm --name "taqryr-ui" -- start 
             pm2 save
